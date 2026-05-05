@@ -571,6 +571,10 @@
                                 <img id="mc-pre-img" style="width:100%;height:100%;object-fit:cover;">
                             </div>
                         </div>
+                        <label style="display:flex;align-items:flex-start;gap:8px;margin-top:8px;cursor:pointer;font-size:12px;line-height:1.4;color:#64748b;">
+                            <input type="checkbox" id="mc-accept-terms" style="margin-top:2px;cursor:pointer;accent-color:#000;">
+                            Ao continuar, concordo com os <a href="http://provoulevou.com.br/termos.html" target="_blank" style="color:#8b5cf6;text-decoration:underline;">Termos e Condições</a>
+                        </label>
                         <button class="mc-btn-black" id="mc-btn-generate" disabled>Ver no meu corpo</button>
                     </div>
 
@@ -889,7 +893,7 @@
 
         function checkFields() {
             const nums = phoneInput.value.replace(/\D/g, '');
-            const phoneOk = nums.length >= 10 && nums.length <= 11;
+            const phoneOk = (nums.length === 10 || nums.length === 11) && /^[1-9][1-9]/.test(nums) && (nums.length === 10 || nums[2] === '9');
             document.getElementById('mc-phone-error').style.display = (phoneInput.value.length > 0 && !phoneOk) ? 'block' : 'none';
             phoneInput.style.borderColor = (phoneInput.value.length > 0 && !phoneOk) ? '#ef4444' : 'var(--mc-border)';
             // Medidas ignoradas por enquanto
@@ -897,7 +901,7 @@
             //     ? !!document.getElementById('mc-h-val').value && !!document.getElementById('mc-w-val').value
             //     : !!document.getElementById('mc-cin-val').value && !!document.getElementById('mc-quad-val').value;
             const allOk = !!userPhoto && phoneOk;
-            genBtn.disabled = !allOk;
+            genBtn.disabled = !(allOk && document.getElementById('mc-accept-terms').checked);
             LOG.info('Validação campos — phone:' + phoneOk + ' foto:' + !!userPhoto + ' → botão ' + (allOk ? 'HABILITADO' : 'desabilitado'));
         }
 
@@ -905,6 +909,8 @@
             const el = document.getElementById(id);
             if (el) el.addEventListener('input', checkFields);
         });
+
+        document.getElementById('mc-accept-terms').onchange = checkFields;
 
         realInput.onchange = (e) => {
             userPhoto = e.target.files[0];
